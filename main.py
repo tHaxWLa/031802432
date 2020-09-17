@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
-# 用于命令行输入
-import sys, getopt
-# 正则包
+import sys
 import re
-# html 包
+import gensim
+import difflib
+import pstats
+import cProfile
 import html
-# 自然语言处理包
 import jieba
 import jieba.analyse
 # 机器学习包
@@ -42,9 +41,6 @@ class CosineSimilarity(object):
         return cut_code
 
     def main(self):
-        # 去除停用词 这边不让用
-        #jieba.analyse.set_stop_words('./files/stopwords.txt')
-
         # 提取关键词
         keywords1 = self.extract_keyword(self.s1)
         keywords2 = self.extract_keyword(self.s2)
@@ -68,22 +64,21 @@ class CosineSimilarity(object):
         except Exception as e:
             print(e)
             return 0.0
-
+# 测试
 if __name__ == '__main__':
-    path1=sys.argv[1]
-    path2=sys.argv[2]
-    path3=sys.argv[3]
+    path1=sys.argv[1]	#原文文件
+    path2=sys.argv[2]	#抄袭版论文的文件
+    path3=sys.argv[3]	#答案文件
 
-f = open(path1,encoding='utf-8')   #设置文件对象
+f = open(path1,encoding='utf-8')   #读取原文文件
 s1 = f.read()
 f.close()
-f = open(path2,encoding='utf-8')
+f = open(path2,encoding='utf-8')	#读取抄袭版论文的文件
 s2 = f.read()
 f.close()
 
 similarity = CosineSimilarity(s1,s2)
 result = round(similarity.main(),2)
-print("相似度：",str(result))
+
 with open(path3,"a",encoding='utf-8') as f:	
-    f.write(str(result))
-    f.write("\n")
+		f.write(str(result))	#输出到答案文件
